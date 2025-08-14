@@ -11,7 +11,7 @@ locals {
 resource "cloudflare_record" "project_records" {
   for_each = local.validated_projects
 
-  zone_id  = data.cloudflare_zone.eirian_io.id
+  zone_id  = cloudflare_zone.eirian_io.id
   name     = each.value.subdomain
   content  = each.value.value
   type     = each.value.type

@@ -67,25 +67,26 @@ resource "cloudflare_zone_settings_override" "eirian_io_settings" {
 #   }
 # }
 
-resource "cloudflare_page_rule" "api_bypass_cache" {
-  zone_id  = local.zone_id
-  target   = "api.${var.domain_name}/*"
-  priority = 2
+# Commented out due to free plan limit (3 page rules max)
+# resource "cloudflare_page_rule" "api_bypass_cache" {
+#   zone_id  = local.zone_id
+#   target   = "api.${var.domain_name}/*"
+#   priority = 2
+#
+#   actions {
+#     cache_level = "bypass"
+#   }
+# }
 
-  actions {
-    cache_level = "bypass"
-  }
-}
-
-resource "cloudflare_page_rule" "www_redirect" {
-  zone_id  = local.zone_id
-  target   = "www.${var.domain_name}/*"
-  priority = 3
-
-  actions {
-    forwarding_url {
-      url         = "https://${var.domain_name}/$1"
-      status_code = 301
-    }
-  }
-}
+# resource "cloudflare_page_rule" "www_redirect" {
+#   zone_id  = local.zone_id
+#   target   = "www.${var.domain_name}/*"
+#   priority = 3
+#
+#   actions {
+#     forwarding_url {
+#       url         = "https://${var.domain_name}/$1"
+#       status_code = 301
+#     }
+#   }
+# }

@@ -2,14 +2,17 @@ provider "cloudflare" {
   api_token = var.cloudflare_api_token
 }
 
-# Data source to get the zone information
-data "cloudflare_zone" "eirian_io" {
-  name = var.domain_name
+# CloudFlare Zone resource - Terraform manages the zone
+resource "cloudflare_zone" "eirian_io" {
+  account_id = var.cloudflare_account_id
+  zone       = var.domain_name
+  plan       = "free"
+  type       = "full"
 }
 
 # Local for easier reference
 locals {
-  zone_id = data.cloudflare_zone.eirian_io.id
+  zone_id = cloudflare_zone.eirian_io.id
 }
 
 # Root A Records (specific IP addresses for eirian.io)

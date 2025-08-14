@@ -1,16 +1,16 @@
 output "zone_id" {
   description = "CloudFlare zone ID for eirian.io"
-  value       = data.cloudflare_zone.eirian_io.id
+  value       = cloudflare_zone.eirian_io.id
 }
 
 output "zone_name" {
   description = "Zone name"
-  value       = data.cloudflare_zone.eirian_io.name
+  value       = cloudflare_zone.eirian_io.zone
 }
 
 output "name_servers" {
   description = "CloudFlare name servers for the zone"
-  value       = data.cloudflare_zone.eirian_io.name_servers
+  value       = cloudflare_zone.eirian_io.name_servers
 }
 
 output "dnssec_status" {
@@ -35,7 +35,7 @@ output "dnssec_ds_record" {
 output "project_dns_config" {
   description = "Configuration data for projects to use when creating DNS records"
   value = {
-    zone_id           = data.cloudflare_zone.eirian_io.id
+    zone_id           = cloudflare_zone.eirian_io.id
     domain_name       = var.domain_name
     allowed_subdomains = var.allowed_subdomains
     default_ttl       = var.default_ttl

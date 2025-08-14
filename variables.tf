@@ -4,6 +4,12 @@ variable "cloudflare_api_token" {
   sensitive   = true
 }
 
+variable "cloudflare_account_id" {
+  description = "CloudFlare account ID (required for zone management)"
+  type        = string
+  sensitive   = true
+}
+
 variable "domain_name" {
   description = "The domain name to manage"
   type        = string
