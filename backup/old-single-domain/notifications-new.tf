@@ -48,6 +48,10 @@ resource "cloudflare_notification_policy" "eirian_io_critical" {
   enabled     = true
   alert_type  = "universal_ssl_event_type"
   
+  filters {
+    zones = [module.eirian_io.zone_id]
+  }
+  
   email_integration {
     id = var.notification_email
   }
@@ -60,6 +64,13 @@ resource "cloudflare_notification_policy" "business_domains" {
   description = "SSL events for business-critical domains (eirian.io, eirianconsulting.com)"
   enabled     = true
   alert_type  = "universal_ssl_event_type"
+  
+  filters {
+    zones = [
+      module.eirian_io.zone_id,
+      module.eirianconsulting_com.zone_id
+    ]
+  }
   
   email_integration {
     id = var.notification_email

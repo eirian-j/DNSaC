@@ -1,0 +1,26 @@
+# DNSaC Multi-Domain Configuration Example
+# Copy this file to terraform.tfvars and fill in your values
+
+# CloudFlare API Token with Zone:Read, Zone:Edit, and DNS:Edit permissions
+# Also needs account-level permissions for notification policies
+cloudflare_api_token = "your-cloudflare-api-token-here"
+cloudflare_account_id = "your-cloudflare-account-id-here"
+
+# Notification Settings
+notification_email = "cloudflare.alerts@eirian.io"
+
+# Default Settings for All Domains
+default_ssl_mode = "strict"  # Options: off, flexible, full, strict
+default_proxy_enabled = true
+default_ttl = 300
+default_plan = "free"  # Options: free, pro, business, enterprise
+
+# Security Settings
+default_security_level = "medium"  # Options: essentially_off, low, medium, high, under_attack
+enable_security_headers = true
+
+# Performance Settings
+enable_performance_optimizations = true  # Enables Brotli, HTTP/3, Early Hints, 0-RTT
+
+# Note: Individual domain configurations are in the domains/ directory
+# Each domain can override these defaults as needed

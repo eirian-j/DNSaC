@@ -16,7 +16,3 @@ terraform {
 provider "cloudflare" {
   api_token = var.cloudflare_api_token
 }
-
-# Include all domain configurations
-# Domain configurations are stored in separate files for better organization
-# Each domain is managed through the reusable domain module
