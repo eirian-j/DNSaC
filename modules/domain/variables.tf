@@ -266,3 +266,72 @@ variable "enable_security_headers" {
   type        = bool
   default     = true
 }
+
+# CAA Records Configuration
+variable "caa_records" {
+  description = "Certificate Authority Authorization records"
+  type = map(object({
+    flags = number
+    tag   = string
+    value = string
+    ttl   = optional(number)
+  }))
+  default = {
+    "letsencrypt" = {
+      flags = 0
+      tag   = "issue"
+      value = "letsencrypt.org"
+    }
+    "cloudflare" = {
+      flags = 0
+      tag   = "issue"
+      value = "comodoca.com"
+    }
+    "digicert" = {
+      flags = 0
+      tag   = "issue"
+      value = "digicert.com"
+    }
+    "iodef" = {
+      flags = 0
+      tag   = "iodef"
+      value = "mailto:security@eirian.io"
+    }
+  }
+}
+
+variable "enable_caa_records" {
+  description = "Enable Certificate Authority Authorization records"
+  type        = bool
+  default     = true
+}
+
+# External Project Subdomain Validation
+variable "project_subdomain_patterns" {
+  description = "Allowed and restricted patterns for external project subdomains"
+  type = object({
+    allowed     = list(string)
+    restricted  = list(string)
+  })
+  default = {
+    allowed = [
+      "*.dev", "*.test", "*.staging", "*.lab", 
+      "dev-*", "test-*", "staging-*", "lab-*",
+      "api", "app", "dashboard", "admin", "portal",
+      "crewai", "n8n", "grafana", "prometheus"
+    ]
+    restricted = [
+      "@", "www", "mail", "email", "mx", "mx*", 
+      "ns", "ns*", "dns", "dns*", "ftp", "sftp",
+      "autoconfig", "autodiscover", "lyncdiscover",
+      "sip", "sipfed*", "_*", "dmarc", "dkim*",
+      "selector*", "spf", "txt", "caa"
+    ]
+  }
+}
+
+variable "validate_dns_conflicts" {
+  description = "Enable validation to prevent DNS conflicts with external projects"
+  type        = bool
+  default     = false  # Disabled by default - only enable for external project validation
+}

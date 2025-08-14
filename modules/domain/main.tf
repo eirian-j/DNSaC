@@ -149,6 +149,7 @@ resource "cloudflare_record" "srv" {
   name    = each.value.name
   type    = "SRV"
   ttl     = coalesce(each.value.ttl, 1800)
+  comment = "SRV record: ${each.key} for ${var.domain_name}"
   
   data {
     priority = each.value.priority
@@ -156,6 +157,55 @@ resource "cloudflare_record" "srv" {
     port     = each.value.port
     target   = each.value.target
   }
+}
+
+# CAA Records (Certificate Authority Authorization)
+resource "cloudflare_record" "caa" {
+  for_each = var.enable_caa_records ? var.caa_records : {}
   
-  comment = "SRV record: ${each.key} for ${var.domain_name}"
+  zone_id  = cloudflare_zone.domain.id
+  name     = "@"
+  type     = "CAA"
+  ttl      = coalesce(each.value.ttl, var.default_ttl)
+  comment  = "CAA record: ${each.key} for ${var.domain_name} - Certificate authority authorization"
+  
+  data {
+    flags = each.value.flags
+    tag   = each.value.tag
+    value = each.value.value
+  }
+}
+
+# Local validation for DNS conflicts
+locals {
+  # Extract all DNS record names being created
+  dns_record_names = concat(
+    [for k, v in var.dns_records : v.name],
+    [for k, v in var.txt_records : v.name],
+    [for k, v in var.mx_records : v.name],
+    [for k, v in var.srv_records : v.name],
+    var.www_cname_target != "" ? ["www"] : []
+  )
+  
+  # Check for conflicts with restricted patterns
+  restricted_conflicts = var.validate_dns_conflicts ? [
+    for name in local.dns_record_names :
+    name if contains(var.project_subdomain_patterns.restricted, name) ||
+           contains(var.project_subdomain_patterns.restricted, "${name}*") ||
+           startswith(name, "_")
+  ] : []
+  
+  # Validation message
+  validation_errors = length(local.restricted_conflicts) > 0 ? [
+    "DNS record name conflicts detected with restricted patterns: ${join(", ", local.restricted_conflicts)}"
+  ] : []
+}
+
+# Validation check - will fail deployment if conflicts detected
+resource "terraform_data" "dns_validation" {
+  count = var.validate_dns_conflicts && length(local.validation_errors) > 0 ? 1 : 0
+  
+  provisioner "local-exec" {
+    command = "echo 'ERROR: ${local.validation_errors[0]}' && exit 1"
+  }
 }

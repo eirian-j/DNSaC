@@ -97,7 +97,7 @@ module "jwalter_eu" {
     }
     "dmarc" = {
       name    = "_dmarc"
-      content = "v=DMARC1; p=quarantine; rua=mailto:dmarc@eirian.io"
+      content = "v=DMARC1; p=reject; sp=reject; pct=100; rua=mailto:dmarc@eirian.io; ruf=mailto:dmarc-forensic@eirian.io; fo=1"
       ttl     = var.default_ttl
     }
   }
