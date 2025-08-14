@@ -22,7 +22,8 @@ resource "cloudflare_record" "root_a_1" {
   content = "31.43.160.6"
   type    = "A"
   ttl     = 1
-  comment = "Root A record 1 managed by DNSaC"
+  proxied = true
+  comment = "Root A record 1 managed by DNSaC - Proxied through CloudFlare"
 }
 
 resource "cloudflare_record" "root_a_2" {
@@ -31,7 +32,8 @@ resource "cloudflare_record" "root_a_2" {
   content = "31.43.161.6"
   type    = "A"
   ttl     = 1
-  comment = "Root A record 2 managed by DNSaC"
+  proxied = true
+  comment = "Root A record 2 managed by DNSaC - Proxied through CloudFlare"
 }
 
 # WWW CNAME (Framer)
