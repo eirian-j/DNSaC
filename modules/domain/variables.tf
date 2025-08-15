@@ -307,27 +307,22 @@ variable "enable_caa_records" {
 }
 
 # External Project Subdomain Validation
-variable "project_subdomain_patterns" {
-  description = "Allowed and restricted patterns for external project subdomains"
-  type = object({
-    allowed     = list(string)
-    restricted  = list(string)
-  })
-  default = {
-    allowed = [
-      "*.dev", "*.test", "*.staging", "*.lab", 
-      "dev-*", "test-*", "staging-*", "lab-*",
-      "api", "app", "dashboard", "admin", "portal",
-      "crewai", "n8n", "grafana", "prometheus"
-    ]
-    restricted = [
-      "@", "www", "mail", "email", "mx", "mx*", 
-      "ns", "ns*", "dns", "dns*", "ftp", "sftp",
-      "autoconfig", "autodiscover", "lyncdiscover",
-      "sip", "sipfed*", "_*", "dmarc", "dkim*",
-      "selector*", "spf", "txt", "caa"
-    ]
-  }
+variable "approved_projects" {
+  description = "List of approved project names that can modify DNS"
+  type        = list(string)
+  default     = ["monika", "jarvis", "hal"]
+}
+
+variable "approved_environments" {
+  description = "List of approved environment suffixes"
+  type        = list(string)
+  default     = ["lab", "dev", "staging", "prod"]
+}
+
+variable "current_project" {
+  description = "The project currently attempting to modify DNS (set by API token)"
+  type        = string
+  default     = ""  # Empty means DNSaC admin access (can modify anything)
 }
 
 variable "validate_dns_conflicts" {

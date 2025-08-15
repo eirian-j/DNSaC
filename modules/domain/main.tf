@@ -187,17 +187,24 @@ locals {
     var.www_cname_target != "" ? ["www"] : []
   )
   
-  # Check for conflicts with restricted patterns
-  restricted_conflicts = var.validate_dns_conflicts ? [
+  # Simple project-based validation
+  # If current_project is set (external project), only allow records matching:
+  # *-{current_project}-{env} where env is in approved_environments
+  invalid_records = var.validate_dns_conflicts && var.current_project != "" ? [
     for name in local.dns_record_names :
-    name if contains(var.project_subdomain_patterns.restricted, name) ||
-           contains(var.project_subdomain_patterns.restricted, "${name}*") ||
-           startswith(name, "_")
+    name if !(
+      # Check if project is approved
+      contains(var.approved_projects, var.current_project) &&
+      # Check if record matches pattern: *-project-env
+      can(regex("^[a-z0-9]+-${var.current_project}-(${join("|", var.approved_environments)})$", name))
+    )
   ] : []
   
   # Validation message
-  validation_errors = length(local.restricted_conflicts) > 0 ? [
-    "DNS record name conflicts detected with restricted patterns: ${join(", ", local.restricted_conflicts)}"
+  validation_errors = length(local.invalid_records) > 0 ? [
+    "Project '${var.current_project}' cannot modify these records: ${join(", ", local.invalid_records)}. Only records matching *-${var.current_project}-{${join(",", var.approved_environments)}} are allowed."
+  ] : var.current_project != "" && !contains(var.approved_projects, var.current_project) ? [
+    "Project '${var.current_project}' is not in the approved projects list: ${join(", ", var.approved_projects)}"
   ] : []
 }
 
