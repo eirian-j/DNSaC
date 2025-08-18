@@ -3,26 +3,26 @@
 
 module "jwalter_eu" {
   source = "./modules/domain"
-  
+
   # Domain Configuration
   cloudflare_account_id = var.cloudflare_account_id
-  domain_name          = "jwalter.eu"
-  plan                = var.default_plan
-  
+  domain_name           = "jwalter.eu"
+  plan                  = var.default_plan
+
   # DNS Records - Same infrastructure as eirian.io
   root_a_records = [
     "31.43.160.6",
     "31.43.161.6"
   ]
-  
+
   www_cname_target = "sites.framer.app."
-  
+
   # SSL and Proxy Settings
-  ssl_mode            = var.default_ssl_mode
-  proxy_root_records  = var.default_proxy_enabled
-  proxy_www_record    = false  # Keep www pointing to Framer directly
-  default_ttl         = var.default_ttl
-  
+  ssl_mode           = var.default_ssl_mode
+  proxy_root_records = var.default_proxy_enabled
+  proxy_www_record   = false # Keep www pointing to Framer directly
+  default_ttl        = var.default_ttl
+
   # Office 365 MX Records
   mx_records = {
     "root_mx" = {
@@ -86,8 +86,14 @@ module "jwalter_eu" {
       type    = "CNAME"
       ttl     = var.default_ttl
     }
+    "google_verification_cname" = {
+      name    = "w6rdy3kudnli"
+      content = "gv-5iv7mnlvddippf.dv.googlehosted.com."
+      type    = "CNAME"
+      ttl     = 300
+    }
   }
-  
+
   # TXT Records for verification, SPF, and DMARC
   txt_records = {
     "spf" = {
@@ -100,8 +106,13 @@ module "jwalter_eu" {
       content = "v=DMARC1; p=reject; sp=reject; pct=100; rua=mailto:dmarc@eirian.io; ruf=mailto:dmarc-forensic@eirian.io; fo=1"
       ttl     = var.default_ttl
     }
+    "google_site_verification" = {
+      name    = "@"
+      content = "google-site-verification=uhkOPnBdxo-Koy6saXZUAgziS1G3lzP38CU-x3XfxtU"
+      ttl     = 300
+    }
   }
-  
+
   # SRV Records for Teams/Skype services
   srv_records = {
     "sip_tls" = {
@@ -121,19 +132,19 @@ module "jwalter_eu" {
       ttl      = 1800
     }
   }
-  
+
   # CloudFlare Settings - GDPR-compliant configuration
-  security_level              = var.default_security_level
-  enable_security_headers     = var.enable_security_headers
-  brotli_compression         = var.enable_performance_optimizations
-  early_hints               = var.enable_performance_optimizations
-  http3                     = var.enable_performance_optimizations
-  zero_rtt                  = var.enable_performance_optimizations
-  
+  security_level          = var.default_security_level
+  enable_security_headers = var.enable_security_headers
+  brotli_compression      = var.enable_performance_optimizations
+  early_hints             = var.enable_performance_optimizations
+  http3                   = var.enable_performance_optimizations
+  zero_rtt                = var.enable_performance_optimizations
+
   # Privacy-focused settings for EU domain
-  privacy_pass               = true
-  email_obfuscation          = true
-  ip_geolocation            = false    # Reduced tracking for EU compliance
-  cache_level               = "aggressive"
-  browser_cache_ttl         = 14400
+  privacy_pass      = true
+  email_obfuscation = true
+  ip_geolocation    = false # Reduced tracking for EU compliance
+  cache_level       = "aggressive"
+  browser_cache_ttl = 14400
 }
