@@ -23,39 +23,39 @@ resource "cloudflare_zone_settings_override" "domain_settings" {
 
   settings {
     # SSL Configuration
-    ssl                         = var.ssl_mode
-    always_use_https            = var.always_use_https ? "on" : "off"
-    automatic_https_rewrites    = var.automatic_https_rewrites ? "on" : "off"
-    
+    ssl                      = var.ssl_mode
+    always_use_https         = var.always_use_https ? "on" : "off"
+    automatic_https_rewrites = var.automatic_https_rewrites ? "on" : "off"
+
     # Security Settings
-    security_level             = var.security_level
-    browser_check              = var.browser_check ? "on" : "off"
-    challenge_ttl              = var.challenge_ttl
-    
+    security_level = var.security_level
+    browser_check  = var.browser_check ? "on" : "off"
+    challenge_ttl  = var.challenge_ttl
+
     # Performance Settings  
-    brotli                     = var.brotli_compression ? "on" : "off"
-    early_hints                = var.early_hints ? "on" : "off"
-    http3                      = var.http3 ? "on" : "off"
-    zero_rtt                   = var.zero_rtt ? "on" : "off"
-    
+    brotli      = var.brotli_compression ? "on" : "off"
+    early_hints = var.early_hints ? "on" : "off"
+    http3       = var.http3 ? "on" : "off"
+    zero_rtt    = var.zero_rtt ? "on" : "off"
+
     # Caching Settings
-    browser_cache_ttl          = var.browser_cache_ttl
-    cache_level                = var.cache_level
-    
+    browser_cache_ttl = var.browser_cache_ttl
+    cache_level       = var.cache_level
+
     # Development Settings
-    development_mode           = var.development_mode ? "on" : "off"
-    
+    development_mode = var.development_mode ? "on" : "off"
+
     # Privacy Settings
-    privacy_pass               = var.privacy_pass ? "on" : "off"
-    
+    privacy_pass = var.privacy_pass ? "on" : "off"
+
     # Other Settings
     # rocket_loader              = var.rocket_loader  # Disabled for free plan compatibility
-    opportunistic_encryption   = var.opportunistic_encryption ? "on" : "off"
-    ip_geolocation             = var.ip_geolocation ? "on" : "off"
-    email_obfuscation          = var.email_obfuscation ? "on" : "off"
-    server_side_exclude        = var.server_side_exclude ? "on" : "off"
-    hotlink_protection         = var.hotlink_protection ? "on" : "off"
-    
+    opportunistic_encryption = var.opportunistic_encryption ? "on" : "off"
+    ip_geolocation           = var.ip_geolocation ? "on" : "off"
+    email_obfuscation        = var.email_obfuscation ? "on" : "off"
+    server_side_exclude      = var.server_side_exclude ? "on" : "off"
+    hotlink_protection       = var.hotlink_protection ? "on" : "off"
+
     # Rate Limiting (if supported by plan)
     dynamic "security_header" {
       for_each = var.enable_security_headers ? [1] : []
@@ -72,14 +72,14 @@ resource "cloudflare_zone_dnssec" "domain" {
 }
 
 data "cloudflare_zone_dnssec" "domain" {
-  zone_id = cloudflare_zone.domain.id
+  zone_id    = cloudflare_zone.domain.id
   depends_on = [cloudflare_zone_dnssec.domain]
 }
 
 # DNS Records - Root A Records
 resource "cloudflare_record" "root_a" {
   count = length(var.root_a_records)
-  
+
   zone_id = cloudflare_zone.domain.id
   name    = "@"
   content = var.root_a_records[count.index]
@@ -92,7 +92,7 @@ resource "cloudflare_record" "root_a" {
 # WWW CNAME Record
 resource "cloudflare_record" "www_cname" {
   count = var.www_cname_target != "" ? 1 : 0
-  
+
   zone_id = cloudflare_zone.domain.id
   name    = "www"
   content = var.www_cname_target
@@ -105,7 +105,7 @@ resource "cloudflare_record" "www_cname" {
 # Custom DNS Records
 resource "cloudflare_record" "custom" {
   for_each = var.dns_records
-  
+
   zone_id  = cloudflare_zone.domain.id
   name     = each.value.name
   content  = each.value.content
@@ -119,7 +119,7 @@ resource "cloudflare_record" "custom" {
 # MX Records
 resource "cloudflare_record" "mx" {
   for_each = var.mx_records
-  
+
   zone_id  = cloudflare_zone.domain.id
   name     = each.value.name
   content  = each.value.content
@@ -132,7 +132,7 @@ resource "cloudflare_record" "mx" {
 # TXT Records
 resource "cloudflare_record" "txt" {
   for_each = var.txt_records
-  
+
   zone_id = cloudflare_zone.domain.id
   name    = each.value.name
   content = each.value.content
@@ -144,13 +144,13 @@ resource "cloudflare_record" "txt" {
 # SRV Records  
 resource "cloudflare_record" "srv" {
   for_each = var.srv_records
-  
+
   zone_id = cloudflare_zone.domain.id
   name    = each.value.name
   type    = "SRV"
   ttl     = coalesce(each.value.ttl, 1800)
   comment = "SRV record: ${each.key} for ${var.domain_name}"
-  
+
   data {
     priority = each.value.priority
     weight   = each.value.weight
@@ -162,13 +162,13 @@ resource "cloudflare_record" "srv" {
 # CAA Records (Certificate Authority Authorization)
 resource "cloudflare_record" "caa" {
   for_each = var.enable_caa_records ? var.caa_records : {}
-  
-  zone_id  = cloudflare_zone.domain.id
-  name     = "@"
-  type     = "CAA"
-  ttl      = coalesce(each.value.ttl, var.default_ttl)
-  comment  = "CAA record: ${each.key} for ${var.domain_name} - Certificate authority authorization"
-  
+
+  zone_id = cloudflare_zone.domain.id
+  name    = "@"
+  type    = "CAA"
+  ttl     = coalesce(each.value.ttl, var.default_ttl)
+  comment = "CAA record: ${each.key} for ${var.domain_name} - Certificate authority authorization"
+
   data {
     flags = each.value.flags
     tag   = each.value.tag
@@ -186,7 +186,7 @@ locals {
     [for k, v in var.srv_records : v.name],
     var.www_cname_target != "" ? ["www"] : []
   )
-  
+
   # Simple project-based validation
   # If current_project is set (external project), only allow records matching:
   # *-{current_project}-{env} where env is in approved_environments
@@ -199,11 +199,11 @@ locals {
       can(regex("^[a-z0-9]+-${var.current_project}-(${join("|", var.approved_environments)})$", name))
     )
   ] : []
-  
+
   # Validation message
   validation_errors = length(local.invalid_records) > 0 ? [
     "Project '${var.current_project}' cannot modify these records: ${join(", ", local.invalid_records)}. Only records matching *-${var.current_project}-{${join(",", var.approved_environments)}} are allowed."
-  ] : var.current_project != "" && !contains(var.approved_projects, var.current_project) ? [
+    ] : var.current_project != "" && !contains(var.approved_projects, var.current_project) ? [
     "Project '${var.current_project}' is not in the approved projects list: ${join(", ", var.approved_projects)}"
   ] : []
 }
@@ -211,7 +211,7 @@ locals {
 # Validation check - will fail deployment if conflicts detected
 resource "terraform_data" "dns_validation" {
   count = var.validate_dns_conflicts && length(local.validation_errors) > 0 ? 1 : 0
-  
+
   provisioner "local-exec" {
     command = "echo 'ERROR: ${local.validation_errors[0]}' && exit 1"
   }

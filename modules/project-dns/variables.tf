@@ -3,60 +3,96 @@ variable "zone_id" {
   type        = string
 }
 
-variable "project_name" {
-  description = "Name of the project creating the DNS record"
+variable "domain" {
+  description = "Base domain name (e.g., eirian.io)"
   type        = string
 }
 
-variable "subdomain" {
-  description = "Subdomain to create (e.g., 'api' or 'myapp.dev')"
+variable "project" {
+  description = "Project name (must be from authorized list)"
   type        = string
 
   validation {
-    condition     = length(var.subdomain) > 0 && length(var.subdomain) <= 63
-    error_message = "Subdomain must be between 1 and 63 characters."
+    condition     = contains(["monika", "jarvis", "hal"], var.project)
+    error_message = "Project must be one of: monika, jarvis, hal."
   }
 }
 
-variable "type" {
-  description = "DNS record type"
-  type        = string
-  
+variable "services" {
+  description = "Map of services with their environments and configurations"
+  type = map(object({
+    environments = map(object({
+      a_records = optional(list(object({
+        ip_address = string
+        ttl        = optional(number, 300)
+        comment    = optional(string)
+      })), [])
+      aaaa_records = optional(list(object({
+        ipv6_address = string
+        ttl          = optional(number, 300)
+        comment      = optional(string)
+      })), [])
+      cname_target  = optional(string) # For CNAME records pointing to the A record
+      cname_ttl     = optional(number, 300)
+      cname_comment = optional(string)
+    }))
+  }))
+
   validation {
-    condition     = contains(["A", "AAAA", "CNAME", "TXT", "MX", "SRV"], var.type)
-    error_message = "Type must be one of: A, AAAA, CNAME, TXT, MX, SRV."
+    condition = alltrue([
+      for service_name, service in var.services : alltrue([
+        for env_name, env in service.environments :
+        contains(["lab", "dev", "staging", "prod"], env_name)
+      ])
+    ])
+    error_message = "Environment must be one of: lab, dev, staging, prod."
   }
-}
-
-variable "value" {
-  description = "DNS record value"
-  type        = string
-}
-
-variable "ttl" {
-  description = "DNS record TTL"
-  type        = number
-  default     = 300
 
   validation {
-    condition     = var.ttl >= 60 && var.ttl <= 86400
+    condition = alltrue([
+      for service_name, service in var.services : alltrue([
+        for env_name, env in service.environments : alltrue([
+          for a_record in coalesce(env.a_records, []) :
+          can(regex("^([0-9]{1,3}\\.){3}[0-9]{1,3}$", a_record.ip_address))
+        ])
+      ])
+    ])
+    error_message = "IP address must be a valid IPv4 address."
+  }
+
+  validation {
+    condition = alltrue([
+      for service_name, service in var.services : alltrue([
+        for env_name, env in service.environments : alltrue([
+          for aaaa_record in coalesce(env.aaaa_records, []) :
+          can(regex("^(([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:))$", aaaa_record.ipv6_address))
+        ])
+      ])
+    ])
+    error_message = "IPv6 address must be valid."
+  }
+
+  validation {
+    condition = alltrue([
+      for service_name, service in var.services : alltrue([
+        for env_name, env in service.environments : alltrue(flatten([
+          [for a_record in coalesce(env.a_records, []) :
+            !contains(["ttl"], keys(a_record)) || (a_record.ttl >= 60 && a_record.ttl <= 86400)
+          ],
+          [for aaaa_record in coalesce(env.aaaa_records, []) :
+            !contains(["ttl"], keys(aaaa_record)) || (aaaa_record.ttl >= 60 && aaaa_record.ttl <= 86400)
+          ]
+        ]))
+      ])
+    ])
     error_message = "TTL must be between 60 and 86400 seconds."
   }
-}
 
-variable "priority" {
-  description = "Priority for MX/SRV records"
-  type        = number
-  default     = null
-}
-
-variable "comment" {
-  description = "Comment for the DNS record"
-  type        = string
-  default     = "Managed by project"
-}
-
-variable "allowed_subdomains" {
-  description = "List of allowed subdomain patterns"
-  type        = list(string)
+  validation {
+    condition = alltrue([
+      for service_name, service in var.services :
+      length(service_name) > 0 && length(service_name) <= 63 && can(regex("^[a-z0-9]([a-z0-9-]*[a-z0-9])?$", service_name))
+    ])
+    error_message = "Service name must be a valid DNS label (1-63 characters, lowercase alphanumeric and hyphens only, cannot start or end with hyphen)."
+  }
 }

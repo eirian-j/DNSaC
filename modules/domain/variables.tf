@@ -10,7 +10,7 @@ variable "cloudflare_account_id" {
 variable "domain_name" {
   description = "Domain name to manage"
   type        = string
-  
+
   validation {
     condition     = can(regex("^[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9]?\\.[a-zA-Z]{2,}$", var.domain_name))
     error_message = "Domain name must be a valid domain format."
@@ -22,7 +22,7 @@ variable "plan" {
   description = "CloudFlare plan (free, pro, business, enterprise)"
   type        = string
   default     = "free"
-  
+
   validation {
     condition     = contains(["free", "pro", "business", "enterprise"], var.plan)
     error_message = "Plan must be one of: free, pro, business, enterprise."
@@ -34,7 +34,7 @@ variable "root_a_records" {
   description = "List of A record IP addresses for root domain"
   type        = list(string)
   default     = []
-  
+
   validation {
     condition = alltrue([
       for ip in var.root_a_records : can(cidrhost("${ip}/32", 0))
@@ -101,7 +101,7 @@ variable "ssl_mode" {
   description = "SSL mode (off, flexible, full, strict)"
   type        = string
   default     = "strict"
-  
+
   validation {
     condition     = contains(["off", "flexible", "full", "strict"], var.ssl_mode)
     error_message = "SSL mode must be one of: off, flexible, full, strict."
@@ -125,7 +125,7 @@ variable "default_ttl" {
   description = "Default TTL for DNS records"
   type        = number
   default     = 300
-  
+
   validation {
     condition     = var.default_ttl >= 60 && var.default_ttl <= 86400
     error_message = "TTL must be between 60 and 86400 seconds."
@@ -148,7 +148,7 @@ variable "security_level" {
   description = "Security level (essentially_off, low, medium, high, under_attack)"
   type        = string
   default     = "medium"
-  
+
   validation {
     condition     = contains(["essentially_off", "low", "medium", "high", "under_attack"], var.security_level)
     error_message = "Security level must be one of: essentially_off, low, medium, high, under_attack."
@@ -201,7 +201,7 @@ variable "cache_level" {
   description = "Cache level (aggressive, basic, simplified)"
   type        = string
   default     = "aggressive"
-  
+
   validation {
     condition     = contains(["aggressive", "basic", "simplified"], var.cache_level)
     error_message = "Cache level must be one of: aggressive, basic, simplified."
@@ -223,8 +223,8 @@ variable "privacy_pass" {
 variable "rocket_loader" {
   description = "Rocket Loader setting (off, manual, on)"
   type        = string
-  default     = "off"  # Free plan limitation
-  
+  default     = "off" # Free plan limitation
+
   validation {
     condition     = contains(["off", "manual", "on"], var.rocket_loader)
     error_message = "Rocket Loader must be one of: off, manual, on."
@@ -258,7 +258,7 @@ variable "server_side_exclude" {
 variable "hotlink_protection" {
   description = "Enable hotlink protection"
   type        = bool
-  default     = false  # Free plan limitation
+  default     = false # Free plan limitation
 }
 
 variable "enable_security_headers" {
@@ -322,11 +322,11 @@ variable "approved_environments" {
 variable "current_project" {
   description = "The project currently attempting to modify DNS (set by API token)"
   type        = string
-  default     = ""  # Empty means DNSaC admin access (can modify anything)
+  default     = "" # Empty means DNSaC admin access (can modify anything)
 }
 
 variable "validate_dns_conflicts" {
   description = "Enable validation to prevent DNS conflicts with external projects"
   type        = bool
-  default     = false  # Disabled by default - only enable for external project validation
+  default     = false # Disabled by default - only enable for external project validation
 }

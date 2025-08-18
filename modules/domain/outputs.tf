@@ -23,11 +23,11 @@ output "zone_status" {
 output "dnssec_status" {
   description = "DNSSEC status and configuration"
   value = {
-    status         = data.cloudflare_zone_dnssec.domain.status
-    algorithm      = data.cloudflare_zone_dnssec.domain.algorithm
-    digest         = data.cloudflare_zone_dnssec.domain.digest
-    key_tag        = data.cloudflare_zone_dnssec.domain.key_tag
-    public_key     = data.cloudflare_zone_dnssec.domain.public_key
+    status     = data.cloudflare_zone_dnssec.domain.status
+    algorithm  = data.cloudflare_zone_dnssec.domain.algorithm
+    digest     = data.cloudflare_zone_dnssec.domain.digest
+    key_tag    = data.cloudflare_zone_dnssec.domain.key_tag
+    public_key = data.cloudflare_zone_dnssec.domain.public_key
   }
   sensitive = true
 }
@@ -108,12 +108,12 @@ output "srv_records" {
 output "domain_config" {
   description = "Domain configuration summary for external reference"
   value = {
-    domain_name       = var.domain_name
-    zone_id          = cloudflare_zone.domain.id
-    name_servers     = cloudflare_zone.domain.name_servers
-    ssl_mode         = var.ssl_mode
-    proxy_enabled    = var.proxy_root_records
-    dnssec_enabled   = data.cloudflare_zone_dnssec.domain.status == "active"
-    plan             = var.plan
+    domain_name    = var.domain_name
+    zone_id        = cloudflare_zone.domain.id
+    name_servers   = cloudflare_zone.domain.name_servers
+    ssl_mode       = var.ssl_mode
+    proxy_enabled  = var.proxy_root_records
+    dnssec_enabled = data.cloudflare_zone_dnssec.domain.status == "active"
+    plan           = var.plan
   }
 }
