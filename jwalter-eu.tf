@@ -23,17 +23,41 @@ module "jwalter_eu" {
   proxy_www_record   = false # Keep www pointing to Framer directly
   default_ttl        = var.default_ttl
 
-  # Office 365 MX Records
+  # Google Workspace MX Records
   mx_records = {
-    "root_mx" = {
+    "google_mx_1" = {
       name     = "@"
-      content  = "jwalter-eu.mail.protection.outlook.com."
-      priority = 0
+      content  = "aspmx.l.google.com."
+      priority = 1
+      ttl      = var.default_ttl
+    }
+    "google_mx_2" = {
+      name     = "@"
+      content  = "alt1.aspmx.l.google.com."
+      priority = 5
+      ttl      = var.default_ttl
+    }
+    "google_mx_3" = {
+      name     = "@"
+      content  = "alt2.aspmx.l.google.com."
+      priority = 5
+      ttl      = var.default_ttl
+    }
+    "google_mx_4" = {
+      name     = "@"
+      content  = "alt3.aspmx.l.google.com."
+      priority = 10
+      ttl      = var.default_ttl
+    }
+    "google_mx_5" = {
+      name     = "@"
+      content  = "alt4.aspmx.l.google.com."
+      priority = 10
       ttl      = var.default_ttl
     }
   }
 
-  # Personal website subdomains + Office 365 DNS Records
+  # Personal website subdomains + Google Workspace DNS Records
   dns_records = {
     "blog" = {
       name    = "blog"
@@ -56,36 +80,7 @@ module "jwalter_eu" {
       ttl     = var.default_ttl
       proxied = true
     }
-    "autodiscover" = {
-      name    = "autodiscover"
-      content = "autodiscover.outlook.com."
-      type    = "CNAME"
-      ttl     = var.default_ttl
-    }
-    "lyncdiscover" = {
-      name    = "lyncdiscover"
-      content = "webdir.online.lync.com."
-      type    = "CNAME"
-      ttl     = var.default_ttl
-    }
-    "sip" = {
-      name    = "sip"
-      content = "sipdir.online.lync.com."
-      type    = "CNAME"
-      ttl     = var.default_ttl
-    }
-    "selector1_dkim" = {
-      name    = "selector1._domainkey"
-      content = "selector1-jwalter-eu._domainkey.jewalter.onmicrosoft.com."
-      type    = "CNAME"
-      ttl     = var.default_ttl
-    }
-    "selector2_dkim" = {
-      name    = "selector2._domainkey"
-      content = "selector2-jwalter-eu._domainkey.jewalter.onmicrosoft.com."
-      type    = "CNAME"
-      ttl     = var.default_ttl
-    }
+    # Google Workspace records already present
     "google_verification_cname" = {
       name    = "w6rdy3kudnli"
       content = "gv-5iv7mnlvddippf.dv.googlehosted.com."
@@ -98,12 +93,12 @@ module "jwalter_eu" {
   txt_records = {
     "spf" = {
       name    = "@"
-      content = "v=spf1 include:spf.protection.outlook.com -all"
+      content = "v=spf1 include:_spf.google.com include:spf.protection.outlook.com ~all"
       ttl     = var.default_ttl
     }
     "dmarc" = {
       name    = "_dmarc"
-      content = "v=DMARC1; p=reject; sp=reject; pct=100; rua=mailto:dmarc@eirian.io; ruf=mailto:dmarc-forensic@eirian.io; fo=1"
+      content = "v=DMARC1; p=quarantine; sp=quarantine; pct=100; rua=mailto:dmarc@eirian.io; ruf=mailto:dmarc-forensic@eirian.io; fo=1"
       ttl     = var.default_ttl
     }
     "google_site_verification" = {
@@ -113,25 +108,8 @@ module "jwalter_eu" {
     }
   }
 
-  # SRV Records for Teams/Skype services
-  srv_records = {
-    "sip_tls" = {
-      name     = "_sip._tls"
-      priority = 100
-      weight   = 1
-      port     = 443
-      target   = "sipdir.online.lync.com."
-      ttl      = 1800
-    }
-    "sipfed_tcp" = {
-      name     = "_sipfederationtls._tcp"
-      priority = 100
-      weight   = 1
-      port     = 5061
-      target   = "sipfed.online.lync.com."
-      ttl      = 1800
-    }
-  }
+  # SRV Records - removed Office 365 specific records
+  srv_records = {}
 
   # CloudFlare Settings - GDPR-compliant configuration
   security_level          = var.default_security_level
