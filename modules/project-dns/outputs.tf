@@ -37,6 +37,7 @@ output "cname_records" {
       name        = record.name
       target      = record.value
       ttl         = record.ttl
+      proxied     = record.proxied
       service     = local.all_records[key].service
       environment = local.all_records[key].env
     }
