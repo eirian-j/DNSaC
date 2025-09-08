@@ -66,7 +66,7 @@ locals {
           "${service_name}.${var.project}.${env_name}.${var.domain}"
         )
         ttl     = env.cname_ttl
-        proxied = env.cname_proxied
+        proxied = coalesce(env.cname_proxied, true)
         comment = coalesce(env.cname_comment, "${var.project}/${service_name} - ${env_name} CNAME")
       } if length(coalesce(env.a_records, [])) > 0 || length(coalesce(env.aaaa_records, [])) > 0 || env.cname_target != null
     ]
