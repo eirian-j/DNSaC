@@ -34,6 +34,7 @@ variable "services" {
       })), [])
       cname_target  = optional(string) # For CNAME records pointing to the A record
       cname_ttl     = optional(number, 300)
+      cname_proxied = optional(bool, true) # Whether to proxy CNAME through Cloudflare
       cname_comment = optional(string)
     }))
   }))

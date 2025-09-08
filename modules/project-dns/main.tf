@@ -66,6 +66,7 @@ locals {
           "${service_name}.${var.project}.${env_name}.${var.domain}"
         )
         ttl     = env.cname_ttl
+        proxied = env.cname_proxied
         comment = coalesce(env.cname_comment, "${var.project}/${service_name} - ${env_name} CNAME")
       } if length(coalesce(env.a_records, [])) > 0 || length(coalesce(env.aaaa_records, [])) > 0 || env.cname_target != null
     ]
@@ -121,6 +122,7 @@ resource "cloudflare_record" "cname_records" {
   value   = each.value.value
   ttl     = each.value.ttl
   comment = each.value.comment
+  proxied = each.value.proxied
 
   lifecycle {
     prevent_destroy = false
