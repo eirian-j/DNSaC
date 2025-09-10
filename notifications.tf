@@ -8,7 +8,7 @@ resource "cloudflare_notification_policy" "ssl_certificate_expiry" {
   description = "Alert when SSL certificates are expiring for any managed domain"
   enabled     = true
   alert_type  = "universal_ssl_event_type"
-  
+
   email_integration {
     id = var.notification_email
   }
@@ -21,7 +21,7 @@ resource "cloudflare_notification_policy" "origin_ssl_events" {
   description = "Monitor origin SSL certificate changes and validation issues across all domains"
   enabled     = true
   alert_type  = "custom_ssl_certificate_event_type"
-  
+
   email_integration {
     id = var.notification_email
   }
@@ -34,7 +34,7 @@ resource "cloudflare_notification_policy" "ssl_validation_errors" {
   description = "Alert on SSL validation failures in strict mode across all domains"
   enabled     = true
   alert_type  = "universal_ssl_event_type"
-  
+
   email_integration {
     id = var.notification_email
   }
@@ -47,7 +47,7 @@ resource "cloudflare_notification_policy" "eirian_io_critical" {
   description = "High-priority alerts for primary business domain"
   enabled     = true
   alert_type  = "universal_ssl_event_type"
-  
+
   email_integration {
     id = var.notification_email
   }
@@ -60,7 +60,7 @@ resource "cloudflare_notification_policy" "business_domains" {
   description = "SSL events for business-critical domains (eirian.io, eirianconsulting.com)"
   enabled     = true
   alert_type  = "universal_ssl_event_type"
-  
+
   email_integration {
     id = var.notification_email
   }

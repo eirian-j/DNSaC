@@ -106,6 +106,11 @@ module "jwalter_eu" {
       content = "google-site-verification=uhkOPnBdxo-Koy6saXZUAgziS1G3lzP38CU-x3XfxtU"
       ttl     = 300
     }
+    "atlassian_domain_verification" = {
+      name    = "@"
+      content = "atlassian-domain-verification=9KYj7bFkdqZCFKi4rDYnWzeAyyKqWvk8M6EmkrTa7ZbWCNHDsKBg7VphS2o9HIQL"
+      ttl     = var.default_ttl
+    }
   }
 
   # SRV Records - removed Office 365 specific records

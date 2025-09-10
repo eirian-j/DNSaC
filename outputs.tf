@@ -107,39 +107,39 @@ output "all_domains" {
   description = "All managed domains configuration summary"
   value = {
     "eirian.io" = {
-      zone_id      = module.eirian_io.zone_id
-      name_servers = module.eirian_io.name_servers
-      ssl_mode     = "strict"
+      zone_id       = module.eirian_io.zone_id
+      name_servers  = module.eirian_io.name_servers
+      ssl_mode      = "strict"
       proxy_enabled = true
     }
     "eirianconsulting.com" = {
-      zone_id      = module.eirianconsulting_com.zone_id
-      name_servers = module.eirianconsulting_com.name_servers
-      ssl_mode     = "strict"
+      zone_id       = module.eirianconsulting_com.zone_id
+      name_servers  = module.eirianconsulting_com.name_servers
+      ssl_mode      = "strict"
       proxy_enabled = true
     }
     "myrisk.ai" = {
-      zone_id      = module.myrisk_ai.zone_id
-      name_servers = module.myrisk_ai.name_servers
-      ssl_mode     = "strict"
+      zone_id       = module.myrisk_ai.zone_id
+      name_servers  = module.myrisk_ai.name_servers
+      ssl_mode      = "strict"
       proxy_enabled = true
     }
     "myrisk.now" = {
-      zone_id      = module.myrisk_now.zone_id
-      name_servers = module.myrisk_now.name_servers
-      ssl_mode     = "strict"
+      zone_id       = module.myrisk_now.zone_id
+      name_servers  = module.myrisk_now.name_servers
+      ssl_mode      = "strict"
       proxy_enabled = true
     }
     "jwalter.eu" = {
-      zone_id      = module.jwalter_eu.zone_id
-      name_servers = module.jwalter_eu.name_servers
-      ssl_mode     = "strict"
+      zone_id       = module.jwalter_eu.zone_id
+      name_servers  = module.jwalter_eu.name_servers
+      ssl_mode      = "strict"
       proxy_enabled = true
     }
     "walter.sg" = {
-      zone_id      = module.walter_sg.zone_id
-      name_servers = module.walter_sg.name_servers
-      ssl_mode     = "strict"
+      zone_id       = module.walter_sg.zone_id
+      name_servers  = module.walter_sg.name_servers
+      ssl_mode      = "strict"
       proxy_enabled = true
     }
   }

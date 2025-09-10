@@ -18,7 +18,7 @@ variable "notification_email" {
   description = "Email address for CloudFlare notifications"
   type        = string
   default     = "cloudflare.alerts@eirian.io"
-  
+
   validation {
     condition     = can(regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", var.notification_email))
     error_message = "Must be a valid email address."
@@ -30,7 +30,7 @@ variable "default_ssl_mode" {
   description = "Default SSL mode for all domains"
   type        = string
   default     = "strict"
-  
+
   validation {
     condition     = contains(["off", "flexible", "full", "strict"], var.default_ssl_mode)
     error_message = "SSL mode must be one of: off, flexible, full, strict."
@@ -47,7 +47,7 @@ variable "default_ttl" {
   description = "Default TTL for DNS records across all domains"
   type        = number
   default     = 300
-  
+
   validation {
     condition     = var.default_ttl >= 60 && var.default_ttl <= 86400
     error_message = "TTL must be between 60 and 86400 seconds."
@@ -58,7 +58,7 @@ variable "default_plan" {
   description = "Default CloudFlare plan for domains"
   type        = string
   default     = "free"
-  
+
   validation {
     condition     = contains(["free", "pro", "business", "enterprise"], var.default_plan)
     error_message = "Plan must be one of: free, pro, business, enterprise."
@@ -70,7 +70,7 @@ variable "default_security_level" {
   description = "Default security level for all domains"
   type        = string
   default     = "medium"
-  
+
   validation {
     condition     = contains(["essentially_off", "low", "medium", "high", "under_attack"], var.default_security_level)
     error_message = "Security level must be one of: essentially_off, low, medium, high, under_attack."
